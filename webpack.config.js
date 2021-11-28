@@ -1,29 +1,24 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 module.exports = {
-    entry: path.join(__dirname, "src", "index.js"),
-    output: {
-        path: path.resolve(__dirname, "dist"),
-    },
+    entry: path.join(__dirname, "./src/index.js"),
+    mode: "development",
+    
     module: {
         rules: [
             {
-                test: /\.?js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: "babel-loader",
-                    options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react']
-                    }
-                }
+                test: /\.(js|jsx)$/,
+                exclude: /(node_modules)/,
+                use: ["babel-loader"]
             },
             {
                 test: /\.css$/i,
                 use: ["style-loader", "css-loader"],
             },
             {
-                test: /\.(png|jp(e*)g|svg|gif)$/,
-                use: ['file-loader'],
+                test: /\.(png|jp(e*)g|svg|gif|ico)$/,
+                exclude: /(node_modules)/,
+                use: ['file-loader?name=[name].[ext]'],
             },
             {
                 test: /\.svg$/,
@@ -31,9 +26,21 @@ module.exports = {
             },
         ]
     },
-    plugins: [
-        new HtmlWebpackPlugin({
-            template: path.join(__dirname, "src", "index.html"),
-        })
-    ]
+    resolve: {
+        extensions: ["*", ".js", ".jsx"]
+    },
+    externals: {
+        'react': 'React'
+    },
+    output: {
+        path: path.resolve(__dirname, "public/"),
+        publicPath: "/public/",
+        filename: "bundle.js"
+    },
+    devServer: {
+        static: {
+            directory: path.join(__dirname, "public/")
+        },
+        port: 3000
+    }
 }
